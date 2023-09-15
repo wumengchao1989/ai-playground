@@ -1,0 +1,55 @@
+.chatboxContainer {
+  height: 100%;
+  position: relative;
+  .listboxContainer {
+    overflow: auto;
+    padding: 0 16px;
+    border: 1px solid rgba(140, 140, 140, 0.35);
+    height: calc(100% - 200px);
+    margin-bottom: 16px;
+    .ant-list-items {
+      .ant-list-item {
+        .ant-list-item-meta-title {
+          text-align: left;
+          margin-top: 4px;
+        }
+        .ant-list-item-meta-description {
+          text-align: left;
+        }
+        &.reverse {
+          flex-direction: row-reverse;
+          .ant-list-item-meta {
+            flex-direction: row-reverse;
+            .ant-list-item-meta-avatar {
+              margin-inline-start: 16px;
+              margin-inline-end: 0;
+            }
+            .ant-list-item-meta-title {
+              text-align: right;
+            }
+            .ant-list-item-meta-description {
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+    .textAreaContainer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 16px;
+    }
+  }
+}
+.ant-spin-nested-loading {
+  height: 100%;
+  .ant-spin-container {
+    height: 100%;
+    .ant-layout {
+      height: 100%;
+    }
+  }
+}

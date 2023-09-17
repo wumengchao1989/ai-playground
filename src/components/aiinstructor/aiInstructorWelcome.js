@@ -1,8 +1,15 @@
 import { Avatar } from "antd";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const AIInstructorWelcome = () => {
+  const navigate = useNavigate();
+  const handleNavigate = (item) => {
+    navigate("../ai_instructor_inner", {
+      state: { id: 1, name: item.name },
+    });
+  };
+
   const AvatarList = [
     {
       name: "Michael",
@@ -44,14 +51,13 @@ const AIInstructorWelcome = () => {
                   flexDirection: "column",
                   alignItems: "center",
                 }}
+                onClick={() => handleNavigate(item)}
               >
-                <Link to="/ai_instructor_inner">
-                  <Avatar
-                    src={item.imgSrc}
-                    size={164}
-                    style={{ backgroundColor: item.bgColor }}
-                  />
-                </Link>
+                <Avatar
+                  src={item.imgSrc}
+                  size={164}
+                  style={{ backgroundColor: item.bgColor }}
+                />
                 <h3>{item.name}</h3>
               </div>
             );

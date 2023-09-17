@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Layout, FloatButton, Spin } from "antd";
 import ReactPlayer from "react-player/lazy";
 import containerClient from "./utils";
@@ -6,6 +6,7 @@ import { AudioOutlined } from "@ant-design/icons";
 import recorder from "./recorder";
 import ChatBox from "../chatbox/ChatBox";
 import { v4 as uuidv4 } from "uuid";
+import { useLocation } from "react-router-dom";
 
 const { Content } = Layout;
 
@@ -15,6 +16,15 @@ const AiInstructor = () => {
   const [pressDown, setPressDown] = React.useState(false);
   const [playing, setPlaying] = React.useState(false);
   const [showLoading, setShowLoading] = React.useState(false);
+  const location = useLocation();
+  const [chatGroupId, setChatGroupId] = React.useState("");
+  useEffect(() => {
+    post("/coach/illustarte/add_illustrate_chat_groups", {
+      chatGroupTitle: location.state.name,
+    }).then((res) => {
+      setChatGroupId(res.res._id);
+    });
+  }, []);
   const recordStart = () => {
     setPressDown(true);
     recorder.start().then(
@@ -28,9 +38,10 @@ const AiInstructor = () => {
         const blockBlobClient = containerClient.getBlockBlobClient(bolbName);
         blockBlobClient.uploadData(wavBlob).then((res) => {
           if (res._response.status === 201) {
-            post("/illustarte/send_illustrate_message", { bolbName }).then(
-              (res) => {}
-            );
+            post("/coach/illustarte/send_illustrate_message", {
+              bolbName,
+              chatGroupId,
+            }).then((res) => {});
           }
         });
       },
@@ -74,6 +85,7 @@ const AiInstructor = () => {
               ""
             )}
             <ChatBox
+              chatGroupId={chatGroupId}
               noMessageInput
               isIllustrate
               setPlaying={setPlaying}

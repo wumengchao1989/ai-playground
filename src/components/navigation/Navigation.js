@@ -12,7 +12,7 @@ const Navigation = (props) => {
   const handleDeleteChatGroups = (e, id) => {
     e.preventDefault();
     e.stopPropagation();
-    post("/delete_chat_groups", { id }).then((res) => {
+    post("/copilot/delete_chat_groups", { id }).then((res) => {
       if (res.success) {
         messageApi.success("delete success");
         getChatGroups();
@@ -22,7 +22,7 @@ const Navigation = (props) => {
     });
   };
   const getChatGroups = async () => {
-    return get("/get_chat_groups").then((res) => {
+    return get("/copilot/get_chat_groups").then((res) => {
       if (res.res) {
         setMenuItems(
           res.res.map((item) => {
@@ -61,12 +61,12 @@ const Navigation = (props) => {
 
   const addNewChat = async () => {
     setLoading(true);
-    post("/add_chat_groups", {
+    post("/copilot/add_chat_groups", {
       chatGroupTitle: `Copilot chat ${menuItems.length + 1}`,
     }).then((res) => {
       if (res.success) {
         const { _id } = res.res;
-        post("/send_request", {
+        post("/copilot/send_request", {
           prompt: "",
           chatGroupId: _id,
           is_init: true,

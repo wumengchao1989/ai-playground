@@ -6,7 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import ChatBoxLayout from "./components/chatbox/ChatBoxLayout";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
-import DashboardAnalysisLayout from "./components/dashboardanalysis/DashboardanalysisLayout";
+import CoachDataManagerLayout from "./components/dashboardanalysis/CoachDataManagerLayout";
 import ArchDesignLayout from "./components/archdesign/ArchdesignLayout";
 import AutoUpgradeLayout from "./components/autoupgrade/AutoUpgradeLayout";
 import AiInstructor from "./components/aiinstructor/aiInstructor";
@@ -31,8 +31,8 @@ const router = createBrowserRouter([
         element: <ChatBoxLayout />,
       },
       {
-        path: "dashboardanalysis",
-        element: <DashboardAnalysisLayout />,
+        path: "/coach_data_management",
+        element: <CoachDataManagerLayout />,
       },
       {
         path: "archdesign",

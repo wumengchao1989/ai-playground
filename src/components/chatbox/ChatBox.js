@@ -49,17 +49,17 @@ const ChatBox = (props) => {
               (item) => item.reverse === true
             ).length;
             setData(res.res.chatMessages);
-            if (nextCurrentMessageCount === currentMessageCount + 1) {
+            if (nextCurrentMessageCount !== currentMessageCount) {
               setShowLoading(false);
             }
           } else {
             setData([]);
             if (!hasCalledInitRef.current) {
+              hasCalledInitRef.current = true;
               post("/coach/illustarte/send_illustrate_message", {
                 chatGroupId: currentChatGroupIdRef.current,
                 isInit: true,
               });
-              hasCalledInitRef.current = true;
             }
           }
         }

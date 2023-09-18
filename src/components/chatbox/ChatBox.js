@@ -3,7 +3,7 @@ import { Avatar, Divider, List, Skeleton, Spin } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "./style/Chatbox.scss";
 import ClassNames from "classnames";
-import { get } from "../../axios";
+import { get, post } from "../../axios";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -15,6 +15,7 @@ const ChatBox = (props) => {
   const [data, setData] = useState([]);
   const currentDataRef = React.useRef([]);
   const currentChatGroupIdRef = React.useRef(chatGroupId);
+  const hasCalledInitRef = React.useRef(false);
   useEffect(() => {
     currentChatGroupIdRef.current = chatGroupId;
   }, [chatGroupId]);
@@ -36,7 +37,11 @@ const ChatBox = (props) => {
         id: currentChatGroupIdRef.current,
       }).then((res) => {
         if (res.success === true) {
-          if (res.res && res.res.chatMessages) {
+          if (
+            res.res &&
+            res.res.chatMessages &&
+            res.res.chatMessages.length !== 0
+          ) {
             const currentMessageCount = currentDataRef.current.filter(
               (item) => item.reverse === true
             ).length;
@@ -49,10 +54,17 @@ const ChatBox = (props) => {
             }
           } else {
             setData([]);
+            if (!hasCalledInitRef.current) {
+              post("/coach/illustarte/send_illustrate_message", {
+                chatGroupId: currentChatGroupIdRef.current,
+                isInit: true,
+              });
+              hasCalledInitRef.current = true;
+            }
           }
         }
       });
-    }, 2000);
+    }, 5000);
   }, []);
 
   const itemRenderer = (item, index) => {

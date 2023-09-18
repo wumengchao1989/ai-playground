@@ -1,6 +1,6 @@
 import { Avatar } from "antd";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AIInstructorWelcome = () => {
   const navigate = useNavigate();
@@ -9,11 +9,10 @@ const AIInstructorWelcome = () => {
       state: { id: 1, name: item.name },
     });
   };
-
   const AvatarList = [
     {
       name: "Michael",
-      imgSrc: "/avatar/avatar001.jpg",
+      imgSrc: "/avatar/avatar001.png",
       path: "",
       bgColor: "#415385",
     },
@@ -24,8 +23,14 @@ const AIInstructorWelcome = () => {
       bgColor: "#D04A02",
     },
     {
+      name: "Jeff",
+      imgSrc: "/avatar/avatar003.jpeg",
+      path: "",
+      bgColor: "#D04A02",
+    },
+    {
       name: "Virtual Assistant",
-      imgSrc: "/avatar/avatar003.jpg",
+      imgSrc: "/avatar/avatar004.png",
       path: "",
       bgColor: "#26776D",
     },

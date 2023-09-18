@@ -11,13 +11,18 @@ import { useLocation } from "react-router-dom";
 const { Content } = Layout;
 
 import { post } from "../../axios";
-
+const urlMap = new Map();
+urlMap.set("Michael", "/video_with_silent_header.mp4");
+urlMap.set("Shawni", "/shawni.mov");
+urlMap.set("Jeff", "/jeff.mov");
+urlMap.set("Virtual Assistant", "/virtual_assistant.mov");
 const AiInstructor = () => {
   const [pressDown, setPressDown] = React.useState(false);
   const [playing, setPlaying] = React.useState(false);
   const [showLoading, setShowLoading] = React.useState(false);
   const location = useLocation();
   const [chatGroupId, setChatGroupId] = React.useState("");
+  const playerRef = React.useRef(null);
   useEffect(() => {
     post("/coach/illustarte/add_illustrate_chat_groups", {
       chatGroupTitle: location.state.name,
@@ -41,7 +46,7 @@ const AiInstructor = () => {
             post("/coach/illustarte/send_illustrate_message", {
               bolbName,
               chatGroupId,
-            }).then((res) => {});
+            });
           }
         });
       },
@@ -70,10 +75,11 @@ const AiInstructor = () => {
           <ReactPlayer
             width={400}
             height={500}
-            url="/avatarvideo.mp4"
+            url={urlMap.get(location.state.name)}
             loop
             muted
             playing={playing}
+            ref={playerRef}
           />
           <div style={{ width: "80%", height: 980 }}>
             {showLoading ? (

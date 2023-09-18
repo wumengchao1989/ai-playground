@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Layout, FloatButton, Spin } from "antd";
+import { Layout, FloatButton, Spin, Button } from "antd";
 import ReactPlayer from "react-player/lazy";
 import containerClient from "./utils";
 import { AudioOutlined } from "@ant-design/icons";
@@ -7,6 +7,7 @@ import recorder from "./recorder";
 import ChatBox from "../chatbox/ChatBox";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
+import { Player } from "video-react";
 
 const { Content } = Layout;
 
@@ -96,6 +97,7 @@ const AiInstructor = () => {
               isIllustrate
               setPlaying={setPlaying}
               setShowLoading={setShowLoading}
+              videoPlayerRef={playerRef}
             />
           </div>
         </div>

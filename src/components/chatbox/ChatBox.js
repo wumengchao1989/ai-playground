@@ -11,7 +11,13 @@ import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactAudioPlayer from "react-audio-player";
 
 const ChatBox = (props) => {
-  const { isIllustrate, setPlaying, setShowLoading, chatGroupId } = props;
+  const {
+    isIllustrate,
+    setPlaying,
+    setShowLoading,
+    chatGroupId,
+    videoPlayerRef,
+  } = props;
   const [data, setData] = useState([]);
   const currentDataRef = React.useRef([]);
   const currentChatGroupIdRef = React.useRef(chatGroupId);
@@ -114,9 +120,16 @@ const ChatBox = (props) => {
                   autoPlay
                   onPlay={() => {
                     setPlaying(true);
+                    videoPlayerRef.current.seekTo(3, "seconds");
                   }}
-                  onEnded={() => setPlaying(false)}
-                  onPause={() => setPlaying(false)}
+                  onEnded={() => {
+                    setPlaying(false);
+                    videoPlayerRef.current.seekTo(0, "seconds");
+                  }}
+                  onPause={() => {
+                    setPlaying(false);
+                    videoPlayerRef.current.seekTo(0, "seconds");
+                  }}
                 />
               ) : (
                 ""

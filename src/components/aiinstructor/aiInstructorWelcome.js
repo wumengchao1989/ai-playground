@@ -24,7 +24,7 @@ const AIInstructorWelcome = () => {
     },
     {
       name: "Jeff",
-      imgSrc: "/avatar/avatar003.jpeg",
+      imgSrc: "/avatar/avatar003.png",
       path: "",
       bgColor: "#D04A02",
     },
@@ -47,9 +47,10 @@ const AIInstructorWelcome = () => {
       <div style={{ display: "flex", flexDirection: "column" }}>
         <h1 style={{ fontSize: 80 }}>Leadership Coach Bot</h1>
         <div style={{ display: "flex", justifyContent: "space-around" }}>
-          {AvatarList.map((item) => {
+          {AvatarList.map((item, index) => {
             return (
               <div
+                key={index}
                 style={{
                   display: "flex",
                   justifyContent: "center",

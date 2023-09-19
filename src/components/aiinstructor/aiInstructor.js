@@ -7,7 +7,6 @@ import recorder from "./recorder";
 import ChatBox from "../chatbox/ChatBox";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
-import { Player } from "video-react";
 
 const { Content } = Layout;
 
@@ -24,6 +23,7 @@ const AiInstructor = () => {
   const location = useLocation();
   const [chatGroupId, setChatGroupId] = React.useState("");
   const playerRef = React.useRef(null);
+
   useEffect(() => {
     post("/coach/illustarte/add_illustrate_chat_groups", {
       chatGroupTitle: location.state.name,
@@ -31,6 +31,7 @@ const AiInstructor = () => {
       setChatGroupId(res.res._id);
     });
   }, []);
+
   const recordStart = () => {
     setPressDown(true);
     recorder.start().then(
@@ -62,6 +63,9 @@ const AiInstructor = () => {
     setPressDown(false);
     setShowLoading(true);
   };
+  const resetMessages = () => {
+    post("/coach/illustarte/reset_messages");
+  };
   return (
     <Layout>
       <Content
@@ -82,7 +86,8 @@ const AiInstructor = () => {
             playing={playing}
             ref={playerRef}
           />
-          <div style={{ width: "80%", height: 980 }}>
+          <Button onClick={() => resetMessages()}>Reset</Button>
+          <div style={{ width: "80%", height: 580, marginLeft: 24 }}>
             {showLoading ? (
               <Spin
                 style={{ position: "absolute", left: "50%", top: "50%" }}
@@ -112,6 +117,7 @@ const AiInstructor = () => {
               ? { boxShadow: "none", backgroundColor: "#f5222d" }
               : { backgroundColor: "#ff4d4f" }
           }
+          disabled={showLoading}
         >
           record
         </FloatButton>

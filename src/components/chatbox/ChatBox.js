@@ -19,19 +19,45 @@ const ChatBox = (props) => {
     videoPlayerRef,
   } = props;
   const [data, setData] = useState([]);
+  const [reverseData, setReverseData] = useState([]);
+
   const currentDataRef = React.useRef([]);
   const currentChatGroupIdRef = React.useRef(chatGroupId);
   const hasCalledInitRef = React.useRef(false);
+  const endRef = React.useRef(null);
+  useEffect(() => {
+    if (setShowLoading) setShowLoading(false);
+  }, [reverseData.length]);
+
+  useEffect(() => {
+    scrollToEnd();
+    if (setShowLoading) setShowLoading(false);
+  }, [data.length]);
+
   useEffect(() => {
     currentChatGroupIdRef.current = chatGroupId;
   }, [chatGroupId]);
+
   useEffect(() => {
     get("/coach/illustrate/get_illustrate_chat_groups", {
       id: currentChatGroupIdRef.current,
     }).then((res) => {
       if (res.success === true) {
         if (res.res && res.res.chatMessages) {
-          setData(res.res.chatMessages);
+          setData(
+            res.res.chatMessages.map((item, index) => {
+              if (index === res.res.chatMessages.length - 1) {
+                return { ...item, autoPlay: true };
+              } else {
+                return { ...item };
+              }
+            })
+          );
+          setReverseData(
+            res.res.chatMessages.filter((item) => {
+              return item.reverse;
+            })
+          );
           currentDataRef.current = res.res.chatMessages;
         } else {
           setData([]);
@@ -48,16 +74,20 @@ const ChatBox = (props) => {
             res.res.chatMessages &&
             res.res.chatMessages.length !== 0
           ) {
-            const currentMessageCount = currentDataRef.current.filter(
-              (item) => item.reverse === true
-            ).length;
-            const nextCurrentMessageCount = res.res.chatMessages.filter(
-              (item) => item.reverse === true
-            ).length;
-            setData(res.res.chatMessages);
-            if (nextCurrentMessageCount !== currentMessageCount) {
-              setShowLoading(false);
-            }
+            setData(
+              res.res.chatMessages.map((item, index) => {
+                if (index === res.res.chatMessages.length - 1) {
+                  return { ...item, autoPlay: true };
+                } else {
+                  return { ...item };
+                }
+              })
+            );
+            setReverseData(
+              res.res.chatMessages.filter((item) => {
+                return item.reverse;
+              })
+            );
           } else {
             setData([]);
             if (!hasCalledInitRef.current) {
@@ -66,12 +96,19 @@ const ChatBox = (props) => {
                 chatGroupId: currentChatGroupIdRef.current,
                 isInit: true,
               });
+              if (setShowLoading) setShowLoading(true);
+              console.log("send init");
             }
           }
         }
       });
-    }, 5000);
+    }, 2000);
   }, []);
+  const scrollToEnd = () => {
+    if (endRef && endRef.current) {
+      endRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const itemRenderer = (item, index) => {
     const listItemClassnames = ClassNames({ reverse: !item.reverse });
@@ -117,7 +154,7 @@ const ChatBox = (props) => {
                 <ReactAudioPlayer
                   src={`http://localhost:8084/audio/${item.bolbUrl}`}
                   controls
-                  autoPlay
+                  autoPlay={item.autoPlay}
                   onPlay={() => {
                     setPlaying(true);
                     videoPlayerRef.current.seekTo(3, "seconds");
@@ -142,12 +179,20 @@ const ChatBox = (props) => {
   };
   return (
     <div className="chatboxContainer">
-      <div id="scrollableDiv" className="listboxContainer">
+      <div
+        id="scrollableDiv"
+        className="listboxContainer"
+        style={{ height: "100%" }}
+      >
         <InfiniteScroll
           dataLength={data.length}
           hasMore={false}
           loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
-          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+          endMessage={
+            <div ref={endRef}>
+              <Divider plain>It is all, nothing more 🤐</Divider>
+            </div>
+          }
           scrollableTarget="scrollableDiv"
         >
           <List dataSource={data} renderItem={itemRenderer} />

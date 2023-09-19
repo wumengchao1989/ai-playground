@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Layout, Space, Menu } from "antd";
 import "./App.css";
 import { Outlet } from "react-router-dom";
+import { post } from "./axios";
 const { Header, Footer } = Layout;
 function App() {
   const items1 = [
-    { key: "1", label: <a href="/chatbox">Appkit Copilot</a> },
+    /* { key: "1", label: <a href="/chatbox">Appkit Copilot</a> },
     { key: "2", label: <a href="/autoupgrade">Appkit Auto Upgrader</a> },
     {
       key: "3",
       label: <a href="/coach_data_management">Coach Data Manager</a>,
-    },
+    }, */
     { key: "5", label: <a href="/ai_instructor">Leadership Coach Bot</a> },
-    { key: "6", label: <a href="/demo">Demo</a> },
+    //{ key: "6", label: <a href="/demo">Demo</a> },
   ];
   return (
     <div className="App" style={{ height: "100%" }}>

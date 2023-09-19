@@ -152,7 +152,7 @@ const ChatBox = (props) => {
               />
               {item.reverse && isIllustrate ? (
                 <ReactAudioPlayer
-                  src={`http://localhost:8084/audio/${item.bolbUrl}`}
+                  src={`https://leadershipwebapp.azurewebsites.net/audio/${item.bolbUrl}`}
                   controls
                   autoPlay={item.autoPlay}
                   onPlay={() => {

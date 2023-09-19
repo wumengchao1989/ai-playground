@@ -102,19 +102,19 @@ module.exports = function (proxy, allowedHost) {
     // `proxy` is run between `before` and `after` `webpack-dev-server` hooks
     proxy: {
       "/api/upgrade": {
-        target: "http://127.0.0.1:8082",
+        target: "https://leadershipwebapp.azurewebsites.net",
         changeOrigin: true,
       },
       "/api/coach": {
-        target: "http://127.0.0.1:8084",
+        target: "https://leadershipwebapp.azurewebsites.net",
         changeOrigin: true,
       },
       "/api/copilot": {
-        target: "http://127.0.0.1:8083",
+        target: "https://leadershipwebapp.azurewebsites.net",
         changeOrigin: true,
       },
       "/audio": {
-        target: "http://127.0.0.1:8082",
+        target: "https://leadershipwebapp.azurewebsites.net",
         changeOrigin: true,
       },
     },

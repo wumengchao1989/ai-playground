@@ -7,7 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import axios from "axios";
-const domain = process.env.REACT_APP_BASE_URL;
+const domain = "https://happy-coast-0959e930f.3.azurestaticapps.net";
 const post = (url, params) => {
   return axios({
     method: "post",

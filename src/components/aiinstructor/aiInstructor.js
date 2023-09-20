@@ -13,9 +13,9 @@ const { Content } = Layout;
 import { post } from "../../axios";
 const urlMap = new Map();
 urlMap.set("Michael", "/michale.mp4");
-urlMap.set("Shawni", "/shawni.mp4");
-urlMap.set("Jeff", "/jeff.mp4");
-urlMap.set("Virtual Assistant", "/assistant.mp4");
+urlMap.set("Shawni", "/shawni.mov");
+urlMap.set("Jeff", "/jeff.mov");
+urlMap.set("Virtual Assistant", "/virtual_assistant.mov");
 const AiInstructor = () => {
   const [pressDown, setPressDown] = React.useState(false);
   const [playing, setPlaying] = React.useState(false);

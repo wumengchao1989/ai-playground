@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Layout, FloatButton, Spin, Button } from "antd";
+import { Layout, FloatButton, Spin, Modal } from "antd";
 import ReactPlayer from "react-player/lazy";
 import containerClient from "./utils";
 import { AudioOutlined } from "@ant-design/icons";
@@ -7,7 +7,7 @@ import recorder from "./recorder";
 import ChatBox from "../chatbox/ChatBox";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
-
+const { confirm } = Modal;
 const { Content } = Layout;
 
 import { post } from "../../axios";
@@ -63,9 +63,7 @@ const AiInstructor = () => {
     setPressDown(false);
     setShowLoading(true);
   };
-  const resetMessages = () => {
-    post("/coach/illustarte/reset_messages");
-  };
+ 
   return (
     <Layout>
       <Content
@@ -86,7 +84,6 @@ const AiInstructor = () => {
             playing={playing}
             ref={playerRef}
           />
-          <Button onClick={() => resetMessages()}>Reset</Button>
           <div style={{ width: "80%", height: 580, marginLeft: 24 }}>
             {showLoading ? (
               <Spin

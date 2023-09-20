@@ -1,12 +1,20 @@
-import { Avatar } from "antd";
+import { Avatar, Button, Modal } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+import { post } from "../../axios";
+const { info } = Modal;
 const AIInstructorWelcome = () => {
   const navigate = useNavigate();
   const handleNavigate = (item) => {
     navigate("../ai_instructor_inner", {
       state: { id: 1, name: item.name },
+    });
+  };
+  const handleReset = () => {
+    post("/coach/illustarte/reset_messages").then((res) => {
+      if (res.success) {
+        info({ title: "reset all messages" });
+      }
     });
   };
   const AvatarList = [
@@ -44,6 +52,12 @@ const AIInstructorWelcome = () => {
         height: 800,
       }}
     >
+      <Button
+        onClick={handleReset}
+        style={{ position: "absolute", top: 16, right: 16 }}
+      >
+        Reset
+      </Button>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <h1 style={{ fontSize: 80 }}>Leadership Coach Bot</h1>
         <div style={{ display: "flex", justifyContent: "space-around" }}>

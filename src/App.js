@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Layout, Space, Menu } from "antd";
 import "./App.css";
 import { Outlet } from "react-router-dom";
-import { post } from "./axios";
 const { Header, Footer } = Layout;
 function App() {
   const items1 = [

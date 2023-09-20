@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Divider, List, Skeleton, Spin } from "antd";
+import { Avatar, Divider, List, Skeleton } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "./style/Chatbox.scss";
 import ClassNames from "classnames";
@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactAudioPlayer from "react-audio-player";
+import { domain } from "../../utils/constant";
 
 const ChatBox = (props) => {
   const {
@@ -152,7 +153,7 @@ const ChatBox = (props) => {
               />
               {item.reverse && isIllustrate ? (
                 <ReactAudioPlayer
-                  src={`https://leadershipwebapp.azurewebsites.net/audio/${item.bolbUrl}`}
+                  src={`${domain}/audio/${item.bolbUrl}`}
                   controls
                   autoPlay={item.autoPlay}
                   onPlay={() => {

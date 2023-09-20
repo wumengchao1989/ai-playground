@@ -50,6 +50,7 @@ const CoachDataManagerLayout = () => {
         </Upload>
         <Upload {...voice_upload_props}>
           <Button icon={<UploadOutlined />}>Click to Upload Audio</Button>
+          {JSON.stringify(process.env)}
         </Upload>
       </Content>
     </Layout>

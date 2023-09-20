@@ -3,7 +3,7 @@ import { Layout } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload } from "antd";
 const { Content } = Layout;
-const domain = process.env.REACT_APP_BASE_URL;
+const domain = "https://leadershipwebapp.azurewebsites.net";
 
 const props = {
   name: "file",

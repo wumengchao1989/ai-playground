@@ -28,9 +28,9 @@ const AiInstructor = () => {
         const blockBlobClient = containerClient.getBlockBlobClient(bolbName);
         blockBlobClient.uploadData(wavBlob).then((res) => {
           if (res._response.status === 201) {
-            post("/illustarte/send_illustrate_message", { bolbName }).then(
+            /* post("/illustarte/send_illustrate_message", { bolbName }).then(
               (res) => {}
-            );
+            ); */
           }
         });
       },

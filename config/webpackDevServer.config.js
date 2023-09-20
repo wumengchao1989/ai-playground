@@ -101,12 +101,24 @@ module.exports = function (proxy, allowedHost) {
     },
     // `proxy` is run between `before` and `after` `webpack-dev-server` hooks
     proxy: {
-      "/api": {
-        target: "http://127.0.0.1:8080",
+      "/api/autoupgrade": {
+        target: "http://127.0.0.1:8082",
+        changeOrigin: true,
+      },
+      "/api/autotest": {
+        target: "http://127.0.0.1:8082",
+        changeOrigin: true,
+      },
+      "/api/coach": {
+        target: "http://127.0.0.1:8084",
+        changeOrigin: true,
+      },
+      "/api/copilot": {
+        target: "http://127.0.0.1:8083",
         changeOrigin: true,
       },
       "/audio": {
-        target: "http://127.0.0.1:8080",
+        target: "http://127.0.0.1:8082",
         changeOrigin: true,
       },
     },

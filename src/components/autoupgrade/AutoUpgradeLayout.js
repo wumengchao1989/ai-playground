@@ -195,10 +195,10 @@ const AutoUpgradeLayout = () => {
   const triggerCypressTest = () => {
     setLogIndex("3");
     clearInterval(upgradeCidRef.current);
-    post("/autotest/trigger_cypress_test").then((res) => {
+    post("/autoupgrade/trigger_cypress_test").then((res) => {
       if (res.success) {
         testCidRef.current = setInterval(() => {
-          get("/autotest/get_cypress_test_logs", { id: res.res.id }).then(
+          get("/autoupgrade/get_cypress_test_logs", { id: res.res.id }).then(
             (res) => {
               if (res.success) {
                 const testLogsText = res.res.testLogs;

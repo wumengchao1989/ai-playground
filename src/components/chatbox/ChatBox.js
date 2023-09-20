@@ -10,7 +10,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import ReactAudioPlayer from "react-audio-player";
 
 const chatId = "64ffef6ece40662d8a3069c7";
 
@@ -24,7 +23,7 @@ const ChatBox = (props) => {
   const currentDataRef = React.useRef([]);
   const loadMoreData = () => {
     if (chatid) {
-      get("/get_chat_groups", { id: chatid }).then((res) => {
+      get("/copilot/get_chat_groups", { id: chatid }).then((res) => {
         if (res.success === true) {
           if (res.res && res.res.chatMessages) {
             setData(
@@ -53,7 +52,7 @@ const ChatBox = (props) => {
       }
     );
     setInterval(() => {
-      get("/illustrate/get_illustrate_chat_groups", { id: chatId }).then(
+      get("/coach/illustrate/get_illustrate_chat_groups", { id: chatId }).then(
         (res) => {
           if (res.success === true) {
             if (res.res && res.res.chatMessages) {
@@ -93,15 +92,16 @@ const ChatBox = (props) => {
       reverse: false,
     });
     setData(tempData);
-    post("/send_request", { prompt: inputValue, chatGroupId: chatid }).then(
-      (res) => {
-        if (res.success === true) {
-          loadMoreData();
-          setTextAreaLoading(false);
-          setInputValue("");
-        }
+    post("/copilot/send_request", {
+      prompt: inputValue,
+      chatGroupId: chatid,
+    }).then((res) => {
+      if (res.success === true) {
+        loadMoreData();
+        setTextAreaLoading(false);
+        setInputValue("");
       }
-    );
+    });
   };
 
   const handleChange = (e) => {
@@ -148,7 +148,7 @@ const ChatBox = (props) => {
                   },
                 }}
               />
-              {item.reverse && isIllustrate ? (
+              {/* {item.reverse && isIllustrate ? (
                 <ReactAudioPlayer
                   src={`http://localhost:8081/audio/${item.bolbUrl}`}
                   controls
@@ -161,7 +161,7 @@ const ChatBox = (props) => {
                 />
               ) : (
                 ""
-              )}
+              )} */}
             </div>
           }
         />

@@ -9,7 +9,7 @@ function App() {
     { key: "2", label: <a href="/autoupgrade">Appkit Auto Upgrader</a> },
     // { key: "3", label: <a href="/dashboardanalysis">Dashboard Analysis</a> },
     // { key: "4", label: <a href="/archdesign">Architecture Design</a> },
-    { key: "5", label: <a href="/ai_instructor">Leadership Coach Bot</a> },
+    //{ key: "5", label: <a href="/ai_instructor">Leadership Coach Bot</a> },
     { key: "6", label: <a href="/demo">Demo</a> },
   ];
   return (

@@ -30,22 +30,22 @@ const router = createBrowserRouter([
         path: "/chatbox/:chatid?",
         element: <ChatBoxLayout />,
       },
-      {
+      /* {
         path: "dashboardanalysis",
         element: <DashboardAnalysisLayout />,
-      },
+      }, */
       {
         path: "archdesign",
         element: <ArchDesignLayout />,
       },
-      {
+      /* {
         path: "ai_instructor",
         element: <AIInstructorWelcome />,
       },
       {
         path: "ai_instructor_inner",
         element: <AiInstructor />,
-      },
+      }, */
       {
         path: "demo",
         element: <Demo />,

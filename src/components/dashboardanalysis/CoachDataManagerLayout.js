@@ -2,8 +2,8 @@ import React from "react";
 import { Layout } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, message, Upload } from "antd";
+import { domain } from "../../utils/constant";
 const { Content } = Layout;
-const domain = "https://leadershipwebapp.azurewebsites.net";
 
 const props = {
   name: "file",

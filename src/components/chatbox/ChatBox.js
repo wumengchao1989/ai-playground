@@ -9,7 +9,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactAudioPlayer from "react-audio-player";
-import { domain } from "../../utils/constant";
+import { audioDomain, domain } from "../../utils/constant";
 
 const ChatBox = (props) => {
   const {
@@ -98,7 +98,6 @@ const ChatBox = (props) => {
                 isInit: true,
               });
               if (setShowLoading) setShowLoading(true);
-              console.log("send init");
             }
           }
         }
@@ -153,7 +152,7 @@ const ChatBox = (props) => {
               />
               {item.reverse && isIllustrate ? (
                 <ReactAudioPlayer
-                  src={`${domain}/audio/${item.bolbUrl}`}
+                  src={`${audioDomain}/audio/${item.bolbUrl}`}
                   controls
                   autoPlay={item.autoPlay}
                   onPlay={() => {

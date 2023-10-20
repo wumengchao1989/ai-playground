@@ -324,10 +324,10 @@ const AutoUpgradeLayout = () => {
             }}
           >
             {fileContent ? (
-              <div
+              <code
                 style={{ height: "100%", overflow: "scroll" }}
                 dangerouslySetInnerHTML={{ __html: fileContent }}
-              ></div>
+              ></code>
             ) : (
               <Empty
                 description="No Changes in this file"

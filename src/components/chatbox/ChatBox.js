@@ -37,6 +37,7 @@ const ChatBox = (props) => {
       });
     }
   };
+
   useEffect(() => {
     if (!isIllustrate) return;
     get("/illustrate/get_illustrate_chat_groups", { id: chatId }).then(

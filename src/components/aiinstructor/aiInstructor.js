@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Layout, FloatButton, Spin, Modal } from "antd";
+import { Layout, FloatButton, Spin, Modal, Input } from "antd";
 import ReactPlayer from "react-player/lazy";
 import containerClient from "./utils";
 import { AudioOutlined } from "@ant-design/icons";
@@ -7,7 +7,7 @@ import recorder from "./recorder";
 import ChatBox from "../chatbox/ChatBox";
 import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "react-router-dom";
-const { confirm } = Modal;
+const { TextArea } = Input;
 const { Content } = Layout;
 
 import { post } from "../../axios";
@@ -32,6 +32,16 @@ const AiInstructor = () => {
     });
   }, []);
 
+  const sendTextMessage = (e) => {
+    const value = e.target.value;
+    post("/coach/illustarte/send_illustrate_message", {
+      bolbName: "",
+      chatGroupId,
+      isSpeech: false,
+      text: value,
+    });
+  };
+
   const recordStart = () => {
     setPressDown(true);
     recorder.start().then(
@@ -48,13 +58,14 @@ const AiInstructor = () => {
             post("/coach/illustarte/send_illustrate_message", {
               bolbName,
               chatGroupId,
+              isSpeech: true,
             });
           }
         });
       },
       (error) => {
         // 出错了
-        console.log(error);
+        console.log("Error", error);
       }
     );
   };
@@ -72,6 +83,7 @@ const AiInstructor = () => {
           margin: 0,
           minHeight: "100%",
           background: "#fff",
+          position: "relative",
         }}
       >
         <div style={{ display: "flex", width: "100%" }}>
@@ -84,7 +96,13 @@ const AiInstructor = () => {
             playing={playing}
             ref={playerRef}
           />
-          <div style={{ width: "80%", height: 580, marginLeft: 24 }}>
+          <div
+            style={{
+              width: "80%",
+              height: 500,
+              marginLeft: 24,
+            }}
+          >
             {showLoading ? (
               <Spin
                 style={{ position: "absolute", left: "50%", top: "50%" }}
@@ -100,6 +118,16 @@ const AiInstructor = () => {
               setPlaying={setPlaying}
               setShowLoading={setShowLoading}
               videoPlayerRef={playerRef}
+            />
+            <TextArea
+              style={{
+                height: "20%",
+                width: "70%",
+                position: "absolute",
+                bottom: 8,
+              }}
+              placeholder="Enter questins you want to ask"
+              onPressEnter={sendTextMessage}
             />
           </div>
         </div>

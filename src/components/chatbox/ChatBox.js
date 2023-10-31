@@ -10,6 +10,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactAudioPlayer from "react-audio-player";
 import { audioDomain, domain } from "../../utils/constant";
+import ReactPlayer from "react-player/lazy";
 
 const ChatBox = (props) => {
   const {
@@ -109,9 +110,36 @@ const ChatBox = (props) => {
       endRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+  const getMoreInformation = () => {
+    const userQuestionsList = data.filter((item) => !item.reverse);
+    const lastUserQuestions = userQuestionsList[userQuestionsList.length - 1];
+    post("/coach/illustarte/send_illustrate_message", {
+      bolbName: "",
+      chatGroupId,
+      isSpeech: false,
+      text: lastUserQuestions.message,
+      isGettingMore: true,
+    });
+  };
 
   const itemRenderer = (item, index) => {
     const listItemClassnames = ClassNames({ reverse: !item.reverse });
+    const robotData = data.filter((item) => item.reverse);
+    function findLastDataThatNotEqualNotFoundMessage() {
+      for (let i = robotData.length - 1; i >= 0; i--) {
+        if (
+          robotData[i].message.indexOf(
+            "I can not find anything else related"
+          ) === -1
+        ) {
+          return robotData[i].message;
+        }
+      }
+      return null;
+    }
+    const lastRobotDataMessage = findLastDataThatNotEqualNotFoundMessage();
+    console.log(lastRobotDataMessage);
+
     return (
       <List.Item key={index} className={listItemClassnames}>
         <List.Item.Meta
@@ -128,6 +156,37 @@ const ChatBox = (props) => {
           title={item.userName}
           description={
             <div>
+              {item.reverse && isIllustrate ? (
+                !item.videoUrl ? (
+                  <ReactAudioPlayer
+                    src={`${audioDomain}/audio/${item.bolbUrl}`}
+                    controls
+                    autoPlay={item.autoPlay}
+                    onPlay={() => {
+                      setPlaying(true);
+                      videoPlayerRef.current.seekTo(3, "seconds");
+                    }}
+                    onEnded={() => {
+                      setPlaying(false);
+                      videoPlayerRef.current.seekTo(0, "seconds");
+                    }}
+                    onPause={() => {
+                      setPlaying(false);
+                      videoPlayerRef.current.seekTo(0, "seconds");
+                    }}
+                  />
+                ) : (
+                  <ReactPlayer
+                    width={500}
+                    height={200}
+                    url={`${audioDomain}${item.videoUrl}`}
+                    autoPlay
+                    controls
+                  />
+                )
+              ) : (
+                ""
+              )}
               <ReactMarkdown
                 remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
                 children={item.message}
@@ -150,24 +209,21 @@ const ChatBox = (props) => {
                   },
                 }}
               />
-              {item.reverse && isIllustrate ? (
-                <ReactAudioPlayer
-                  src={`${audioDomain}/audio/${item.bolbUrl}`}
-                  controls
-                  autoPlay={item.autoPlay}
-                  onPlay={() => {
-                    setPlaying(true);
-                    videoPlayerRef.current.seekTo(3, "seconds");
+              {item.reverse &&
+              isIllustrate &&
+              item.message.indexOf("I can not find anything else related") ===
+                -1 &&
+              item.message === lastRobotDataMessage ? (
+                <span
+                  style={{
+                    color: "blue",
+                    cursor: "pointer",
+                    fontWeight: "600",
                   }}
-                  onEnded={() => {
-                    setPlaying(false);
-                    videoPlayerRef.current.seekTo(0, "seconds");
-                  }}
-                  onPause={() => {
-                    setPlaying(false);
-                    videoPlayerRef.current.seekTo(0, "seconds");
-                  }}
-                />
+                  onClick={getMoreInformation}
+                >
+                  Show me more about this topic
+                </span>
               ) : (
                 ""
               )}

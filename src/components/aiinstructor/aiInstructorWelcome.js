@@ -11,9 +11,14 @@ const AIInstructorWelcome = () => {
     });
   };
   const handleReset = () => {
-    post("/coach/illustarte/reset_messages").then((res) => {
+    /* post("/coach/illustarte/reset_messages").then((res) => {
       if (res.success) {
         info({ title: "reset all messages" });
+      }
+    }); */
+    post("/coach/illustarte/video_data_importer").then((res) => {
+      if (res.success) {
+        info({ title: "video data has been imported" });
       }
     });
   };

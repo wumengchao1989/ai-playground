@@ -9,8 +9,9 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ReactAudioPlayer from "react-audio-player";
-import { audioDomain, domain } from "../../utils/constant";
+import { audioDomain } from "../../utils/constant";
 import ReactPlayer from "react-player/lazy";
+import { v4 as uuidv4 } from "uuid";
 
 const ChatBox = (props) => {
   const {
@@ -27,13 +28,13 @@ const ChatBox = (props) => {
   const currentChatGroupIdRef = React.useRef(chatGroupId);
   const hasCalledInitRef = React.useRef(false);
   const endRef = React.useRef(null);
-  useEffect(() => {
+  const reverseDataRef = React.useRef([]);
+  /* useEffect(() => {
     if (setShowLoading) setShowLoading(false);
-  }, [reverseData.length]);
+  }, [reverseData.length]);*/
 
   useEffect(() => {
     scrollToEnd();
-    if (setShowLoading) setShowLoading(false);
   }, [data.length]);
 
   useEffect(() => {
@@ -55,11 +56,14 @@ const ChatBox = (props) => {
               }
             })
           );
-          setReverseData(
-            res.res.chatMessages.filter((item) => {
-              return item.reverse;
-            })
-          );
+          const nextReverseData = res.res.chatMessages.filter((item) => {
+            return item.reverse === true;
+          });
+          if (nextReverseData.length > reverseDataRef.current.length) {
+            setReverseData(nextReverseData);
+            reverseDataRef.current = nextReverseData;
+            setShowLoading(false);
+          }
           currentDataRef.current = res.res.chatMessages;
         } else {
           setData([]);
@@ -85,11 +89,15 @@ const ChatBox = (props) => {
                 }
               })
             );
-            setReverseData(
-              res.res.chatMessages.filter((item) => {
-                return item.reverse;
-              })
-            );
+            const nextReverseData = res.res.chatMessages.filter((item) => {
+              return item.reverse === true;
+            });
+            console.log("length", nextReverseData.length, reverseData.length);
+            if (nextReverseData.length > reverseDataRef.current.length) {
+              setReverseData(nextReverseData);
+              reverseDataRef.current = nextReverseData;
+              setShowLoading(false);
+            }
           } else {
             setData([]);
             if (!hasCalledInitRef.current) {
@@ -114,19 +122,20 @@ const ChatBox = (props) => {
     const userQuestionsList = data.filter((item) => !item.reverse);
     const lastUserQuestions = userQuestionsList[userQuestionsList.length - 1];
     post("/coach/illustarte/send_illustrate_message", {
-      bolbName: "",
+      bolbName: `speech004-${uuidv4()}.wav`,
       chatGroupId,
       isSpeech: false,
       text: lastUserQuestions.message,
       isGettingMore: true,
     });
+    setShowLoading(true);
   };
 
   const itemRenderer = (item, index) => {
     const listItemClassnames = ClassNames({ reverse: !item.reverse });
     const robotData = data.filter((item) => item.reverse);
     function findLastDataThatNotEqualNotFoundMessage() {
-      for (let i = robotData.length - 1; i >= 0; i--) {
+      for (let i = robotData.length - 1; i >= 1; i--) {
         if (
           robotData[i].message.indexOf(
             "I can not find anything else related"
@@ -138,7 +147,6 @@ const ChatBox = (props) => {
       return null;
     }
     const lastRobotDataMessage = findLastDataThatNotEqualNotFoundMessage();
-    console.log(lastRobotDataMessage);
 
     return (
       <List.Item key={index} className={listItemClassnames}>

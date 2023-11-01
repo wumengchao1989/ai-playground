@@ -11,7 +11,7 @@ function App() {
       key: "3",
       label: <a href="/coach_data_management">Coach Data Manager</a>,
     }, */
-    { key: "5", label: <a href="/ai_instructor">Leadership Coach Bot</a> },
+    { key: "5", label: <a href="/ai_instructor">Mentor App</a> },
     //{ key: "6", label: <a href="/demo">Demo</a> },
   ];
   return (

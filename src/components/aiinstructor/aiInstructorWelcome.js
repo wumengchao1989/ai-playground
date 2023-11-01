@@ -57,15 +57,21 @@ const AIInstructorWelcome = () => {
         height: 800,
       }}
     >
-      <Button
+      {/* <Button
         onClick={handleReset}
         style={{ position: "absolute", top: 16, right: 16 }}
       >
         Reset
-      </Button>
+      </Button> */}
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <h1 style={{ fontSize: 80 }}>Leadership Coach Bot</h1>
-        <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <h1 style={{ fontSize: 80 }}>Mentor App</h1>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-around",
+            width: 800,
+          }}
+        >
           {AvatarList.map((item, index) => {
             return (
               <div

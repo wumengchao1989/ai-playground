@@ -23,7 +23,7 @@ const AiInstructor = () => {
   const location = useLocation();
   const [chatGroupId, setChatGroupId] = React.useState("");
   const playerRef = React.useRef(null);
-
+  const [questionValue, setQuestionValue] = React.useState("");
   useEffect(() => {
     post("/coach/illustarte/add_illustrate_chat_groups", {
       chatGroupTitle: location.state.name,
@@ -33,13 +33,19 @@ const AiInstructor = () => {
   }, []);
 
   const sendTextMessage = (e) => {
+    e.preventDefault();
     const value = e.target.value;
     post("/coach/illustarte/send_illustrate_message", {
-      bolbName: "",
+      bolbName: `speech004-${uuidv4()}.wav`,
       chatGroupId,
       isSpeech: false,
       text: value,
     });
+    setShowLoading(true);
+    setQuestionValue("");
+  };
+  const handleTextareaChange = (e) => {
+    setQuestionValue(e.target.value);
   };
 
   const recordStart = () => {
@@ -128,6 +134,8 @@ const AiInstructor = () => {
               }}
               placeholder="Enter questins you want to ask"
               onPressEnter={sendTextMessage}
+              value={questionValue}
+              onChange={handleTextareaChange}
             />
           </div>
         </div>

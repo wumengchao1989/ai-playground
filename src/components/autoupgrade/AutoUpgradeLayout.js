@@ -1,68 +1,73 @@
 import React, { useEffect } from "react";
-import { Layout, Tree, Button, Empty, Modal, Progress } from "antd";
-const { DirectoryTree } = Tree;
-import hljs from "highlight.js";
+import {
+  Layout,
+  Tree,
+  Empty,
+  Tooltip,
+  Card,
+  FloatButton,
+  Select,
+  Modal,
+  Button,
+  Spin,
+} from "antd";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { SaveOutlined } from "@ant-design/icons";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import "highlight.js/styles/a11y-dark.css";
 import "./diff2html.min.css";
 import "./index.css";
 import { get, post } from "../../axios";
-import { Spin } from "antd";
-import { ExclamationCircleFilled } from "@ant-design/icons";
-
-const { confirm } = Modal;
-
+import Editor from "@monaco-editor/react";
+import dayjs from "dayjs";
+import { Header } from "antd/es/layout/layout";
 const { Content, Sider } = Layout;
-const endSuffix = "$$$$$$end$$$$$$";
+const languageMap = {
+  js: "javascript",
+  ts: "typescript",
+  html: "html",
+  css: "css",
+  scss: "scss",
+};
+const { DirectoryTree } = Tree;
+
 const AutoUpgradeLayout = () => {
-  const progressInfoTemp = [
-    {
-      title: "Update",
-      percent: 0,
-      showLoading: false,
-      isCompleted: false,
-    },
-    {
-      title: "Build",
-      percent: 0,
-      showLoading: false,
-      isCompleted: false,
-    },
-    {
-      title: "Code Scan",
-      percent: 0,
-      showLoading: false,
-      isCompleted: false,
-    },
-    {
-      title: "Test",
-      percent: 0,
-      showLoading: false,
-      isCompleted: false,
-    },
-  ];
-  const [currentPhase, setCurrentPhase] = React.useState("0");
   const [fileList, setFileList] = React.useState([]);
-  const [modalOpen, setModalOpen] = React.useState(false);
   const [fileContent, setFileContent] = React.useState("");
+  const [diffContent, setDiffContent] = React.useState("");
+  const [language, setLanguage] = React.useState("html");
+  const [currentFilePath, setCurrentFilePath] = React.useState("");
+  const [commitList, setCommitList] = React.useState([]);
+  const [targetCommitId, setTargetCommitId] = React.useState("");
+  const [showModal, setShowModal] = React.useState(false);
 
-  const initialUpgradeLogs = "Upgrade process start...";
-  const [upgradeLogs, setUpgradeLogs] = React.useState(initialUpgradeLogs);
-  const initialInstallLogs = "Install process start...";
-
-  const [installLogs, setInstallLogs] = React.useState(initialInstallLogs);
-  const initialTestLogs = "Cypress test process start...";
-  const [testLogs, setTestLogs] = React.useState(initialTestLogs);
-  const initialBuildLogs = "Build process start...";
-  const [buildLogs, setBuildLogs] = React.useState(initialBuildLogs);
-  const [logIndex, setLogIndex] = React.useState("0");
-  const [progressInfo, setProgressInfo] = React.useState(progressInfoTemp);
-  const [upgradeProgress, setUpgradeProgress] = React.useState(0);
+  const [diffAnalysisContent, setDiffAnalysisContent] = React.useState("");
   const upgradeCidRef = React.useRef();
-  const installCidRef = React.useRef();
-  const buildCidRef = React.useRef();
-  const testCidRef = React.useRef();
-  const currentPhaseRef = React.useRef(currentPhase);
-  const [isProcessing, setIsProcessing] = React.useState(false);
+
+  const getCommitList = () => {
+    get("/autoupgrade/get_commit_list").then((res) => {
+      if (res.success === true) {
+        const commitListOptions = res.res.all.map((item) => {
+          return {
+            label: `${item.message}-${dayjs(item.date).format(
+              "YYYY-MM-DD HH:mm:ss"
+            )}`,
+            value: item.hash,
+          };
+        });
+        setCommitList(commitListOptions);
+        if (res && res.res && res.res.latest) {
+          setTargetCommitId(res.res.latest.hash);
+        }
+      }
+    });
+  };
+  useEffect(() => {
+    getCommitList();
+  }, []);
+
   const getFileList = () => {
     get("/autoupgrade/get_file_list").then((res) => {
       if (res.success === true) {
@@ -71,63 +76,23 @@ const AutoUpgradeLayout = () => {
       }
     });
   };
-  const getProgressPhase = () => {
-    get("/autoupgrade/get_progress_phase").then((res) => {
-      if (res.success === true) {
-        const phase = res.result.phase;
-        const currentProgressInfo = progressInfo;
-        const prevPhase = currentPhaseRef.current;
-        if (phase && Number(prevPhase) < Number(phase) && Number(phase) <= 4) {
-          currentProgressInfo[Number(prevPhase)].isCompleted = true;
-          currentProgressInfo[Number(prevPhase)].percent = 100;
-          if (currentProgressInfo[Number(prevPhase)])
-            currentProgressInfo[Number(prevPhase)].showLoading = false;
-          if (currentProgressInfo[Number(phase)])
-            currentProgressInfo[Number(phase)].showLoading = true;
-          setProgressInfo(currentProgressInfo);
-          setCurrentPhase(phase);
-          setUpgradeProgress(Number(phase) * 25);
-          currentPhaseRef.current = phase;
-          switch (phase) {
-            case "1":
-              triggerRunInstall();
-              break;
-            case "2":
-              triggerRunBuild();
-              break;
-            case "3":
-              triggerCypressTest();
-              break;
-            default:
-              break;
-          }
-        }
-      }
-    });
-  };
-  const getUpdateProgress = () => {
-    get("/autoupgrade/get_update_progress").then((res) => {
-      if (res.success) {
-        const logs = res.res.updatedFileList.map((item) => {
-          return `${item.key} updated at: ${item.value}\n`;
-        });
-        setUpgradeLogs(`${initialUpgradeLogs}\n` + logs.join(""));
-        const nextProgressInfoTemp = progressInfoTemp;
-        nextProgressInfoTemp[0].percent += 2;
-        setProgressInfo(nextProgressInfoTemp);
-      }
-    });
+  const handleEditorChange = (v) => {
+    setFileContent(v);
   };
 
-  useEffect(() => {
-    document.querySelectorAll("code").forEach((block) => {
-      try {
-        hljs.highlightBlock(block);
-      } catch (e) {
-        console.log(e);
+  const handleCommitSelect = (v) => {
+    setTargetCommitId(v);
+    get("/autoupgrade/get_diff_html_string", {
+      targetCommitId: v,
+      path: currentFilePath,
+    }).then((res) => {
+      if (res.success && res.diff !== "") {
+        setDiffContent(res.res);
+      } else {
+        setDiffContent("");
       }
     });
-  }, [modalOpen]);
+  };
 
   useEffect(() => {
     getFileList();
@@ -136,84 +101,46 @@ const AutoUpgradeLayout = () => {
     }, 5000);
     return () => {
       clearInterval(upgradeCidRef.current);
-      clearInterval(buildCidRef.current);
-      clearInterval(testCidRef.current);
     };
   }, []);
-  useEffect(() => {
-    setInterval(() => {
-      getProgressPhase();
-    }, 5000);
-  }, []);
 
-  const triggerUpdate = () => {
-    post("/autoupgrade/trigger_upgrade");
-    upgradeCidRef.current = setInterval(() => {
-      getUpdateProgress();
-    }, 5000);
-  };
-
-  const triggerRunInstall = () => {
-    clearInterval(upgradeCidRef.current);
-    setLogIndex("1");
-    post("/autoupgrade/trigger_install").then((res) => {
-      if (res.success) {
-        installCidRef.current = setInterval(() => {
-          get("/autoupgrade/get_install_logs", { id: res.res.id }).then(
-            (res) => {
-              if (res.success) {
-                const installLogsText = res.res.installLogs;
-                setInstallLogs(`${initialInstallLogs}\n` + installLogsText);
-              }
-            }
-          );
-        }, 4000);
-      }
+  const handleSaveAndCommit = () => {
+    post("/autoupgrade/save_and_commit", {
+      path: currentFilePath,
+      fileContent,
     });
   };
 
-  const triggerRunBuild = () => {
-    setLogIndex("2");
-    clearInterval(upgradeCidRef.current);
-    post("/autoupgrade/trigger_build").then((res) => {
+  const handleShowAnalysisModal = () => {
+    setShowModal(true);
+    get("/autoupgrade/get_diff_analysis", {
+      targetCommitId,
+      path: currentFilePath,
+    }).then((res) => {
       if (res.success) {
-        buildCidRef.current = setInterval(() => {
-          get("/autoupgrade/get_build_logs", { id: res.res.id }).then((res) => {
-            if (res.success) {
-              const buildLogsText = res.res.buildLogs;
-              if (buildLogsText.indexOf(endSuffix) !== -1) {
-                clearInterval(buildCidRef.current);
-              }
-              setBuildLogs(`${initialBuildLogs}\n` + buildLogsText);
-            }
-          });
-        }, 1500);
-      }
-    });
-  };
-
-  const triggerCypressTest = () => {
-    setLogIndex("3");
-    clearInterval(upgradeCidRef.current);
-    post("/autoupgrade/trigger_cypress_test").then((res) => {
-      if (res.success) {
-        testCidRef.current = setInterval(() => {
-          get("/autoupgrade/get_cypress_test_logs", { id: res.res.id }).then(
-            (res) => {
-              if (res.success) {
-                const testLogsText = res.res.testLogs;
-                setTestLogs(`${initialTestLogs}\n` + testLogsText);
-              }
-            }
-          );
-        }, 1500);
+        setDiffAnalysisContent(res.res.choices[0].message.content);
       }
     });
   };
 
   const handleSelect = (key, item) => {
     if (item.node.isLeaf) {
-      get("/autoupgrade/get_diff_html_string", { path: key }).then((res) => {
+      get("/autoupgrade/get_diff_html_string", {
+        targetCommitId,
+        path: key[0],
+      }).then((res) => {
+        if (res.success && res.diff !== "") {
+          setDiffContent(res.res);
+        } else {
+          setDiffContent("");
+        }
+      });
+      const file_language =
+        languageMap[key[0].split(".").pop()] || "javascript";
+      setLanguage(file_language);
+      setCurrentFilePath(key[0]);
+
+      get("/autoupgrade/get_file_content", { path: key }).then((res) => {
         if (res.success && res.diff !== "") {
           setFileContent(res.res);
         } else {
@@ -221,17 +148,6 @@ const AutoUpgradeLayout = () => {
         }
       });
     }
-  };
-
-  const openUpgradeModal = () => {
-    setModalOpen(true);
-    const nextProgressInfoTemp = progressInfoTemp;
-    nextProgressInfoTemp[0].showLoading = true;
-    setProgressInfo(nextProgressInfoTemp);
-  };
-
-  const handleClickProgress = (index) => {
-    setLogIndex(String(index));
   };
 
   return (
@@ -289,125 +205,97 @@ const AutoUpgradeLayout = () => {
                   }}
                 />
               )}
-              <Button
-                type="primary"
-                disabled={fileList.length === 0}
-                onClick={() => {
-                  if (!isProcessing) {
-                    confirm({
-                      title: "Do you want to start upgrade process?",
-                      icon: <ExclamationCircleFilled />,
-                      content:
-                        "When clicked the OK button, the ai upgrade process will start",
-                      onOk() {
-                        openUpgradeModal();
-                        triggerUpdate();
-                        setIsProcessing(true);
-                      },
-                      onCancel() {},
-                    });
-                  } else {
-                    setModalOpen(true);
-                  }
-                }}
-              >
-                Start Upgrade
-              </Button>
             </div>
           </Sider>
-          <Content
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              height: "100%",
-            }}
-          >
-            {fileContent ? (
-              <code
-                style={{ height: "100%", overflow: "scroll" }}
-                dangerouslySetInnerHTML={{ __html: fileContent }}
-              ></code>
-            ) : (
-              <Empty
-                description="No Changes in this file"
-                imageStyle={{ height: 450 }}
-              />
-            )}
-            <Modal
-              onCancel={() => setModalOpen(false)}
-              open={modalOpen}
-              width={1500}
-              bodyStyle={{ height: 700, paddingTop: 16 }}
-              title="Update Process"
+          <Layout>
+            <Header style={{ backgroundColor: "#1677ff" }}>
+              <Select
+                style={{ width: 300, marginRight: 16 }}
+                options={commitList}
+                onSelect={handleCommitSelect}
+              ></Select>
+              <Button onClick={handleShowAnalysisModal}>Show Analysis</Button>
+            </Header>
+            <Content
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                height: "100%",
+              }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-around",
-                  marginBottom: 32,
-                  alignItems: "center",
-                }}
-              >
-                {progressInfo.map((item, index) => {
-                  return (
-                    <>
-                      <Progress
-                        format={() => item.title}
-                        type="circle"
-                        percent={item.percent}
-                        size={80}
-                        onClick={() => handleClickProgress(index)}
-                      />
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {item.showLoading ? (
-                          <Spin style={{ marginBottom: 8 }} />
-                        ) : (
-                          ""
-                        )}
-                        <div
-                          style={{
-                            height: 2,
-                            width: 200,
-                            background: "#4096ff",
-                            marginBottom: item.showLoading ? 24 : 0,
-                          }}
-                        ></div>
-                      </div>
-                    </>
-                  );
-                })}
-                <Progress type="circle" percent={upgradeProgress} size={64} />
+              <div style={{ height: 250, overflowY: "scroll" }}>
+                {fileContent ? (
+                  <code
+                    style={{ height: 200, overflow: "scroll" }}
+                    dangerouslySetInnerHTML={{ __html: diffContent }}
+                  ></code>
+                ) : (
+                  <Empty
+                    description="No Changes in this file"
+                    imageStyle={{ height: 200 }}
+                  />
+                )}
               </div>
-              <pre
-                className="code"
-                style={{
-                  height: "100%",
-                  overflowY: "scroll",
-                  background: "#000",
-                }}
-              >
-                {logIndex}
-                <code style={{ height: "100%" }}>
-                  {logIndex === "0"
-                    ? upgradeLogs
-                    : logIndex === "1"
-                    ? installLogs
-                    : logIndex === "2"
-                    ? buildLogs
-                    : testLogs}
-                </code>
-              </pre>
-            </Modal>
-          </Content>
+              <Tooltip title="Save and Commit">
+                <FloatButton
+                  type="primary"
+                  icon={<SaveOutlined />}
+                  onClick={handleSaveAndCommit}
+                >
+                  {" "}
+                  save
+                </FloatButton>
+              </Tooltip>
+              <Card style={{ marginTop: 16 }}>
+                <Editor
+                  onChange={handleEditorChange}
+                  language={language}
+                  height={400}
+                  value={fileContent}
+                />
+              </Card>
+            </Content>
+          </Layout>
         </Layout>
       </Content>
+      <Modal
+        destroyOnClose
+        title="Diff analysis"
+        onCancel={() => {
+          setShowModal(false);
+          setDiffAnalysisContent("");
+        }}
+        open={showModal}
+        footer={""}
+      >
+        {diffAnalysisContent ? (
+          <ReactMarkdown
+            remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+            children={diffAnalysisContent}
+            components={{
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || "");
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    {...props}
+                    children={String(children).replace(/\n$/, "")}
+                    style={darcula}
+                    language={match[1]}
+                    PreTag="div"
+                  />
+                ) : (
+                  <code {...props} className={className}>
+                    {children}
+                  </code>
+                );
+              },
+            }}
+          />
+        ) : (
+          <Spin />
+        )}
+      </Modal>
     </Layout>
   );
 };

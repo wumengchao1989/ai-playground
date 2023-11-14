@@ -111,7 +111,7 @@ const AiInstructor = () => {
           >
             {showLoading ? (
               <Spin
-                style={{ position: "absolute", left: "50%", top: "50%" }}
+                style={{ position: "absolute", left: "55%", top: "50%" }}
                 size="large"
               />
             ) : (

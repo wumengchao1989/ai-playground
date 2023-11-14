@@ -195,28 +195,32 @@ const ChatBox = (props) => {
               ) : (
                 ""
               )}
-              <ReactMarkdown
-                remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
-                children={item.message}
-                components={{
-                  code({ node, inline, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || "");
-                    return !inline && match ? (
-                      <SyntaxHighlighter
-                        {...props}
-                        children={String(children).replace(/\n$/, "")}
-                        style={darcula}
-                        language={match[1]}
-                        PreTag="div"
-                      />
-                    ) : (
-                      <code {...props} className={className}>
-                        {children}
-                      </code>
-                    );
-                  },
-                }}
-              />
+              {item.videoUrl ? (
+                ""
+              ) : (
+                <ReactMarkdown
+                  remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
+                  children={item.message}
+                  components={{
+                    code({ node, inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || "");
+                      return !inline && match ? (
+                        <SyntaxHighlighter
+                          {...props}
+                          children={String(children).replace(/\n$/, "")}
+                          style={darcula}
+                          language={match[1]}
+                          PreTag="div"
+                        />
+                      ) : (
+                        <code {...props} className={className}>
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                />
+              )}
               {item.reverse &&
               isIllustrate &&
               item.message.indexOf("I can not find anything else related") ===

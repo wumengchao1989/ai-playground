@@ -121,7 +121,7 @@ const AutoUpgradeLayout = () => {
               >
                 <DiffEditor
                   language={"markdown"}
-                  height={document.body.clientHeight * 0.6}
+                  height={document.body.clientHeight * 0.4}
                   original={originFileContent}
                   modified={fileContent}
                   onMount={(_) => handleEditorMount(_, contentRef)}

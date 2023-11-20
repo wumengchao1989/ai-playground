@@ -20,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <ChatBoxLayout />,
+        element: <AutoUpgradeLayout />,
       },
       {
         path: "/autoupgrade",

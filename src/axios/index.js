@@ -8,10 +8,11 @@
  */
 import axios from "axios";
 const domain = process.env.REACT_APP_BASE_URL;
-const post = (url, params) => {
+const post = (url, params, custom_domain) => {
+  let _domain = custom_domain || domain;
   return axios({
     method: "post",
-    url: `${domain}/api${url}`,
+    url: `${_domain}/api${url}`,
     data: params,
   }).then(function (response) {
     if (response.status === 200) {

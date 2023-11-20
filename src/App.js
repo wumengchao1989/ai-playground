@@ -1,12 +1,12 @@
 import React from "react";
-import { Layout, Space, Menu } from "antd";
+import { Layout, Space, Menu, Avatar } from "antd";
 import "./App.css";
 import { Outlet } from "react-router-dom";
 const { Header, Footer } = Layout;
 function App() {
   const items1 = [
     //{ key: "1", label: <a href="/chatbox">Appkit Copilot</a> },
-    { key: "2", label: <a href="/autoupgrade">PoC</a> },
+    { key: "2", label: <a href="/autoupgrade">AI Maker</a> },
     // { key: "3", label: <a href="/dashboardanalysis">Dashboard Analysis</a> },
     // { key: "4", label: <a href="/archdesign">Architecture Design</a> },
     //{ key: "5", label: <a href="/ai_instructor">Leadership Coach Bot</a> },
@@ -20,13 +20,21 @@ function App() {
         size={[0, 48]}
       >
         <Layout style={{ height: "100%" }}>
-          <Header style={{ backgroundColor: "#D04A02" }}>
+          <Header
+            style={{
+              backgroundColor: "#D04A02",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Menu
-              style={{ backgroundColor: "#D04A02" }}
+              style={{ backgroundColor: "#D04A02", width: 200 }}
               theme="dark"
               mode="horizontal"
               items={items1}
             />
+            <Avatar style={{ position: "absolute", right: 16 }} />
           </Header>
           <Outlet />
           <Footer style={{ textAlign: "center" }}>

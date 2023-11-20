@@ -12,7 +12,7 @@ const post = (url, params, custom_domain) => {
   let _domain = custom_domain || domain;
   return axios({
     method: "post",
-    url: `${_domain}/api${url}`,
+    url: custom_domain ? `${_domain}${url}` : `${_domain}/api${url}`,
     data: params,
   }).then(function (response) {
     if (response.status === 200) {

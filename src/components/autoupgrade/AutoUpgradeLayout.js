@@ -95,7 +95,7 @@ const AutoUpgradeLayout = () => {
             <Content
               style={{
                 display: "flex",
-                justifyContent: "left",
+                justifyContent: "space-around",
                 height: "100%",
               }}
             >
@@ -103,18 +103,25 @@ const AutoUpgradeLayout = () => {
                 type="inner"
                 title={
                   <div
-                    style={{ display: "flex", justifyContent: "space-evenly" }}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-evenly",
+                    }}
                   >
                     <span>AI Generated Content</span>
                     <span>Manual Correction</span>
                   </div>
                 }
-                style={{ marginTop: 16, marginRight: 8, marginLeft: 48 }}
+                style={{
+                  marginTop: 16,
+                  marginRight: 8,
+                  marginLeft: 48,
+                  width: "60%",
+                }}
               >
                 <DiffEditor
                   language={"markdown"}
-                  height={320}
-                  width={850}
+                  height={document.body.clientHeight * 0.6}
                   original={originFileContent}
                   modified={fileContent}
                   onMount={(_) => handleEditorMount(_, contentRef)}
@@ -144,8 +151,8 @@ const AutoUpgradeLayout = () => {
                 style={{
                   marginTop: 16,
                   marginRight: 8,
-                  width: "30%",
                   overflow: "scroll",
+                  width: "32%",
                 }}
               >
                 <ReactMarkdown

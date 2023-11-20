@@ -17,7 +17,7 @@ import remarkGfm from "remark-gfm";
 import "highlight.js/styles/a11y-dark.css";
 import "./diff2html.min.css";
 import "./index.css";
-import Editor from "@monaco-editor/react";
+import Editor, { DiffEditor } from "@monaco-editor/react";
 import { post } from "../../axios";
 import levenshtein from "js-levenshtein";
 const { Content, Footer } = Layout;
@@ -31,12 +31,13 @@ const AutoUpgradeLayout = () => {
   const [prompt, setPrompt] = React.useState("");
   const [textareaLoading, setTextAreaLoading] = React.useState(false);
   const [contentType, setContentType] = React.useState("1");
+  const contentRef = React.useRef("");
 
-  const handleEditorChange = (v) => {
+  const handleEditorChange = (v, ref) => {
     setFileContent(v);
-    const distance = levenshtein(originFileContent, v);
+    const distance = levenshtein(ref.current, v);
     const similarity =
-      (1 - distance / Math.max(originFileContent.length, v.length)) * 100;
+      (1 - distance / Math.max(ref.current.length, v.length)) * 100;
     setContentSimilarity(Math.floor(similarity));
   };
 
@@ -50,12 +51,19 @@ const AutoUpgradeLayout = () => {
       message: prompt,
     }).then((res) => {
       if (res.success) {
+        contentRef.current = res.result;
         setOriginFileContent(res.result);
         setFileContent(res.result);
         setContentSimilarity(100);
         setTextAreaLoading(false);
         setPrompt("");
       }
+    });
+  };
+  const handleEditorMount = (editor, contentRef) => {
+    const modifiedEditor = editor.getModifiedEditor();
+    modifiedEditor.onDidChangeModelContent((_) => {
+      handleEditorChange(modifiedEditor.getValue(), contentRef);
     });
   };
   const saveToADO = () => {
@@ -98,7 +106,7 @@ const AutoUpgradeLayout = () => {
                   marginTop: 16,
                   marginRight: 8,
                   marginLeft: 48,
-                  width: 570,
+                  width: 300,
                   overflow: "scroll",
                 }}
               >
@@ -130,13 +138,21 @@ const AutoUpgradeLayout = () => {
                 title="Corrected Content"
                 style={{ marginTop: 16, marginRight: 8 }}
               >
-                <Editor
+                <DiffEditor
+                  language={"markdown"}
+                  height={320}
+                  width={850}
+                  original={originFileContent}
+                  modified={fileContent}
+                  onMount={(_) => handleEditorMount(_, contentRef)}
+                />
+                {/* <Editor
                   onChange={handleEditorChange}
                   language={"markdown"}
                   height={320}
                   width={570}
                   value={fileContent}
-                />
+                /> */}
               </Card>
               <Card style={{ marginTop: 16, width: 132 }}>
                 <h4>Current Similarity: </h4>

@@ -40,6 +40,7 @@ const AutoUpgradeLayout = () => {
         setFileContent(res.result);
         setContentSimilarity(100);
         setTextAreaLoading(false);
+        setPrompt("");
       }
     });
   };
@@ -47,10 +48,10 @@ const AutoUpgradeLayout = () => {
     post(
       "/dashboard/api/ai/ado/workitem",
       {
-        title: "this is a test case 3",
-        chatpwc: "Yes",
+        title: "First Test",
+        chatpwc: contentSimilarity >= 80 ? "Yes" : "No",
         chatpwcAutomated: "No",
-        description: "aaa",
+        description: fileContent,
       },
       "https://devopsdashboarddev.pwcinternal.com"
     );
@@ -89,6 +90,8 @@ const AutoUpgradeLayout = () => {
               }}
             >
               <Card
+                type="inner"
+                title="AI Generated Content"
                 style={{
                   marginTop: 16,
                   marginRight: 8,
@@ -120,11 +123,15 @@ const AutoUpgradeLayout = () => {
                   }}
                 />
               </Card>
-              <Card style={{ marginTop: 16, marginRight: 8 }}>
+              <Card
+                type="inner"
+                title="Corrected Content"
+                style={{ marginTop: 16, marginRight: 8 }}
+              >
                 <Editor
                   onChange={handleEditorChange}
                   language={"markdown"}
-                  height={400}
+                  height={350}
                   width={570}
                   value={fileContent}
                 />

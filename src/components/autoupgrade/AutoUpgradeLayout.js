@@ -101,12 +101,50 @@ const AutoUpgradeLayout = () => {
             >
               <Card
                 type="inner"
-                title="AI Generated Content"
+                title={
+                  <div
+                    style={{ display: "flex", justifyContent: "space-evenly" }}
+                  >
+                    <span>AI Generated Content</span>
+                    <span>Manual Correction</span>
+                  </div>
+                }
+                style={{ marginTop: 16, marginRight: 8, marginLeft: 48 }}
+              >
+                <DiffEditor
+                  language={"markdown"}
+                  height={320}
+                  width={850}
+                  original={originFileContent}
+                  modified={fileContent}
+                  onMount={(_) => handleEditorMount(_, contentRef)}
+                />
+              </Card>
+              <Card
+                type="inner"
+                title={
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <title>Preview</title>
+                    <h4>Current Similarity:{contentSimilarity} % </h4>
+                    <Button
+                      onClick={saveToADO}
+                      style={{ marginTop: 16 }}
+                      type="primary"
+                      size="small"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                }
                 style={{
                   marginTop: 16,
                   marginRight: 8,
-                  marginLeft: 48,
-                  width: 300,
+                  width: "30%",
                   overflow: "scroll",
                 }}
               >
@@ -132,38 +170,6 @@ const AutoUpgradeLayout = () => {
                     },
                   }}
                 />
-              </Card>
-              <Card
-                type="inner"
-                title="Corrected Content"
-                style={{ marginTop: 16, marginRight: 8 }}
-              >
-                <DiffEditor
-                  language={"markdown"}
-                  height={320}
-                  width={850}
-                  original={originFileContent}
-                  modified={fileContent}
-                  onMount={(_) => handleEditorMount(_, contentRef)}
-                />
-                {/* <Editor
-                  onChange={handleEditorChange}
-                  language={"markdown"}
-                  height={320}
-                  width={570}
-                  value={fileContent}
-                /> */}
-              </Card>
-              <Card style={{ marginTop: 16, width: 132 }}>
-                <h4>Current Similarity: </h4>
-                <div>{contentSimilarity} %</div>
-                <Button
-                  onClick={saveToADO}
-                  style={{ marginTop: 16 }}
-                  type="primary"
-                >
-                  Save
-                </Button>
               </Card>
 
               <Tooltip title="Submit">

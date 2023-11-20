@@ -1,5 +1,14 @@
 import React from "react";
-import { Layout, Tooltip, Card, FloatButton, Input, Button, Spin } from "antd";
+import {
+  Layout,
+  Tooltip,
+  Card,
+  FloatButton,
+  Input,
+  Button,
+  Spin,
+  Select,
+} from "antd";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { SendOutlined } from "@ant-design/icons";
@@ -21,6 +30,7 @@ const AutoUpgradeLayout = () => {
   const [contentSimilarity, setContentSimilarity] = React.useState(100);
   const [prompt, setPrompt] = React.useState("");
   const [textareaLoading, setTextAreaLoading] = React.useState(false);
+  const [contentType, setContentType] = React.useState("");
 
   const handleEditorChange = (v) => {
     setFileContent(v);
@@ -28,6 +38,10 @@ const AutoUpgradeLayout = () => {
     const similarity =
       (1 - distance / Math.max(originFileContent.length, v.length)) * 100;
     setContentSimilarity(Math.floor(similarity));
+  };
+
+  const handleCateSelect = (v) => {
+    setContentType(v);
   };
 
   const handleSaveAndCommit = () => {
@@ -56,18 +70,6 @@ const AutoUpgradeLayout = () => {
       "https://devopsdashboarddev.pwcinternal.com"
     );
   };
-
-  /* const handleShowAnalysisModal = () => {
-    setShowModal(true);
-    get("/autoupgrade/get_diff_analysis", {
-      targetCommitId,
-      path: currentFilePath,
-    }).then((res) => {
-      if (res.success) {
-        setDiffAnalysisContent(res.res.choices[0].message.content);
-      }
-    });
-  }; */
 
   return (
     <Layout>
@@ -131,7 +133,7 @@ const AutoUpgradeLayout = () => {
                 <Editor
                   onChange={handleEditorChange}
                   language={"markdown"}
-                  height={350}
+                  height={320}
                   width={570}
                   value={fileContent}
                 />
@@ -158,6 +160,20 @@ const AutoUpgradeLayout = () => {
               </Tooltip>
             </Content>
             <Footer>
+              <Select
+                style={{ width: 200, marginBottom: 8 }}
+                onSelect={handleCateSelect}
+                options={[
+                  {
+                    value: "0",
+                    label: "User Story",
+                  },
+                  {
+                    value: "1",
+                    label: "Test Case",
+                  },
+                ]}
+              ></Select>
               <Spin spinning={textareaLoading}>
                 <TextArea
                   placeholder="Please enter your prompt"

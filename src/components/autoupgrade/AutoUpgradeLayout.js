@@ -30,7 +30,7 @@ const AutoUpgradeLayout = () => {
   const [contentSimilarity, setContentSimilarity] = React.useState(100);
   const [prompt, setPrompt] = React.useState("");
   const [textareaLoading, setTextAreaLoading] = React.useState(false);
-  const [contentType, setContentType] = React.useState("");
+  const [contentType, setContentType] = React.useState("1");
 
   const handleEditorChange = (v) => {
     setFileContent(v);
@@ -161,6 +161,7 @@ const AutoUpgradeLayout = () => {
             </Content>
             <Footer>
               <Select
+                value={contentType}
                 style={{ width: 200, marginBottom: 8 }}
                 onSelect={handleCateSelect}
                 options={[

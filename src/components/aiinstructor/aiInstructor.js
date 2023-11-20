@@ -9,8 +9,6 @@ import { v4 as uuidv4 } from "uuid";
 
 const { Content } = Layout;
 
-import { post } from "../../axios";
-
 const AiInstructor = () => {
   const [pressDown, setPressDown] = React.useState(false);
   const [playing, setPlaying] = React.useState(false);

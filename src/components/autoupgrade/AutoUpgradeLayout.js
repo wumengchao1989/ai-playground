@@ -2,7 +2,7 @@ import React from "react";
 import { Layout, Tooltip, Card, FloatButton, Input, Button, Spin } from "antd";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { SaveOutlined, SendOutlined } from "@ant-design/icons";
+import { SendOutlined } from "@ant-design/icons";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "highlight.js/styles/a11y-dark.css";
